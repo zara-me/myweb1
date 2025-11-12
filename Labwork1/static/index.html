@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="fa" dir="ltr">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Веб-приложение — Проверка попадания точки</title>
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="main-wrapper">
+    <header>
+        <h1>Вариант 465716 | захра дарабзадех | P3230</h1>
+    </header>
+
+    <main class="container">
+        <!-- Graph Section -->
+        <section class="graph-section card">
+            <div class="graph-legend">
+                <div class="legend-item">
+                    <div class="legend-color legend-in" style="background-color: green;"></div>
+                    <span>Попал в область</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color legend-out" style="background-color: red;"></div>
+                    <span>Не попал</span>
+                </div>
+            </div>
+
+            <div class="graph-container">
+                <svg id="svg-plot" width="300" height="300" xmlns="http://www.w3.org/2000/svg" style="display:block; margin:0 auto;">
+
+                    <!-- Coordinate System -->
+                    <line stroke="currentColor" x1="0" x2="300" y1="150" y2="150" />
+                    <line stroke="currentColor" x1="150" x2="150" y1="0" y2="300" />
+
+                    <!-- Arrows پیکان ها-->
+                    <polygon fill="currentColor" points="150,0 144,15 156,15" />
+                    <polygon fill="currentColor" points="300,150 285,156 285,144" />
+
+                    <!-- X-axis ticks خطوط کوتاه برای نشان دادن مقادیر -->
+                    <line stroke="currentColor" x1="200" x2="200" y1="155" y2="145" />
+                    <line stroke="currentColor" x1="250" x2="250" y1="155" y2="145" />
+                    <line stroke="currentColor" x1="50" x2="50" y1="155" y2="145" />
+                    <line stroke="currentColor" x1="100" x2="100" y1="155" y2="145" />
+
+                    <!-- Y-axis ticks -->
+                    <line stroke="currentColor" x1="145" x2="155" y1="100" y2="100" />
+                    <line stroke="currentColor" x1="145" x2="155" y1="50" y2="50" />
+                    <line stroke="currentColor" x1="145" x2="155" y1="200" y2="200" />
+                    <line stroke="currentColor" x1="145" x2="155" y1="250" y2="250" />
+
+                    <!-- Labels -->
+                    <text x="195" y="140">R/2</text>
+                    <text x="248" y="140">R</text>
+                    <text x="40" y="140">-R</text>
+                    <text x="90" y="140">-R/2</text>
+                    <text x="160" y="105">R/2</text>
+                    <text x="160" y="55">R</text>
+                    <text x="160" y="205">-R/2</text>
+                    <text x="160" y="255">-R</text>
+                    <text x="160" y="10">Y</text>
+                    <text x="290" y="140">X</text>
+
+                    <!-- Area Shapes -->
+                    <rect x="150" y="100" width="100" height="50" fill="currentColor" fill-opacity="0.3" stroke="currentColor" stroke-width="2" />
+                    <polygon fill="currentColor" fill-opacity="0.3" points="150,150 250,150 150,250" stroke="currentColor" stroke-width="2" />
+                    <path d="M 150 150 L 150 250 A 100 100 0 0 1 50 150 Z" fill="currentColor" fill-opacity="0.3" stroke="currentColor" stroke-width="2"/>
+                    <circle cx="150" cy="150" id="target-dot" r="0" stroke="currentColor" fill="currentColor"></circle>
+                </svg>
+
+                <canvas id="graph" width="300" height="300" style="display:none;"></canvas>
+            </div>
+        </section>
+
+        <!-- Form Section -->
+        <section class="form-section card">
+            <form id="data-form" method="POST" autocomplete="off">
+
+                <!-- باکس اخطار (مورد ۱) -->
+                <div id="error" role="alert" class="message-box" style="display:none"></div>
+
+                <!-- X Input -->
+                <div class="input-group">
+                    <label for="x"><strong>X:</strong></label>
+                    <input type="text" id="x" name="xVal" placeholder="введите x" class="input-field" />
+                </div>
+
+                <!-- Y Radio Group (مورد ۳) -->
+                <div style="margin-top: 16px;">
+                    <label style="display: block; margin-bottom: 12px; font-weight: 600;">Y:</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="yVal" value="-4"><span> -4</span></label>
+                        <label><input type="radio" name="yVal" value="-3"><span> -3</span></label>
+                        <label><input type="radio" name="yVal" value="-2"><span> -2</span></label>
+                        <label><input type="radio" name="yVal" value="-1"><span> -1</span></label>
+                        <label><input type="radio" name="yVal" value="0"><span> 0</span></label>
+                        <label><input type="radio" name="yVal" value="1"><span> 1</span></label>
+                        <label><input type="radio" name="yVal" value="2"><span> 2</span></label>
+                        <label><input type="radio" name="yVal" value="3"><span> 3</span></label>
+                        <label><input type="radio" name="yVal" value="4"><span> 4</span></label>
+                    </div>
+                </div>
+
+                <!-- R Input -->
+                <div class="input-group" style="margin-top: 16px;">
+                    <label for="r"><strong>R:</strong></label>
+                    <input type="text" id="r" name="rVal" placeholder="введите R" class="input-field" />
+                </div>
+
+                <!-- Buttons -->
+                <div class="form-actions">
+                    <!-- استایل‌های دکمه‌ها در CSS درون‌خطی بالا قرار گرفتند -->
+                    <input id="check-btn" type="submit" value="Проверить" class="btn primary" style="padding: 10px 20px; border: none; border-radius: 6px; background-color: var(--primary-color); color: white; cursor: pointer;" />
+                    <button id="delete-btn" type="button" class="btn danger" style="padding: 10px 20px; border: none; border-radius: 6px; background-color: #f44336; color: white; cursor: pointer;">удалить</button>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <!-- Results Section -->
+    <section class="results-section">
+        <table id="result-table" class="results-table" aria-live="polite">
+            <thead>
+            <tr>
+                <th>X</th>
+                <th>Y</th>
+                <th>R</th>
+                <th>Попал / Не попал</th>
+                <th>Время</th>
+                <th>Время исполнения (ms)</th>
+            </tr>
+            </thead>
+            <tbody id="output">
+            <tr>
+                <td colspan="6" style="text-align:center;color:#999; padding: 40px;">
+                    Нет сохраненных результатов
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+<script type="module" src="main.js"></script>
+
+</body>
+</html>
