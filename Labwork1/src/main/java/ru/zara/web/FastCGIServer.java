@@ -12,10 +12,43 @@ public class FastCGIServer {
 
     private static final DateTimeFormatter TIME_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
+    //(جایگزین SessionManager)
+    private static final List<CalculationResult> ALL_RESULTS = Collections.synchronizedList(new ArrayList<>());
+
+    public static class CalculationResult {
+        private final double x;
+        private final int y;
+        private final double r;
+        private final boolean isInArea;
+        private final String currentTime;
+        private final double executionTime;
+
+        public CalculationResult(double x, int y, double r, boolean isInArea,
+                                 String currentTime, double executionTime) {
+            this.x = x;
+            this.y = y;
+            this.r = r;
+            this.isInArea = isInArea;
+            this.currentTime = currentTime;
+            this.executionTime = executionTime;
+        }
+
+        public double getX() { return x; }
+        public int getY() { return y; }
+        public double getR() { return r; }
+        public boolean isInArea() { return isInArea; }
+        public String getCurrentTime() { return currentTime; }
+        public double getExecutionTime() { return executionTime; }
+    }
+    // --------------------------------------------------------------------
+
     public static void main(String[] args) {
-        // an infinite loop waiting for FCGI requests.
         var fcgi = new FCGIInterface();
         while (fcgi.FCGIaccept() >= 0) {
+
+            //ТАЙМЕР ЗАПУЩЕН СРАЗУ ПОСЛЕ ПРИНЯТИЯ ЗАПРОСА
+            long startNano = System.nanoTime();
+
             try {
                 String method = FCGIInterface.request.params.getProperty("REQUEST_METHOD");
                 if (method == null) {
@@ -23,12 +56,10 @@ public class FastCGIServer {
                     continue;
                 }
                 if ("POST".equalsIgnoreCase(method)) {
-                    handlePost();
+                    handlePost(startNano); // передача времени начала в обработчик
                 } else if ("OPTIONS".equalsIgnoreCase(method)) {
-                    // Preflight for CORS
                     System.out.println(optionsResult());
                 } else {
-                    // Disallow GET for submissions per task; instruct to use POST
                     System.out.println(errorResult("Unsupported HTTP method: " + method + ". Use POST for submissions."));
                 }
             } catch (Exception e) {
@@ -37,32 +68,34 @@ public class FastCGIServer {
         }
     }
 
-    private static void handlePost() {
+    private static void handlePost(long startNano) {
         String contentType = FCGIInterface.request.params.getProperty("CONTENT_TYPE");
         if (contentType == null || !contentType.startsWith("application/x-www-form-urlencoded")) {
             System.out.println(errorResult("Content-Type must be application/x-www-form-urlencoded"));
             return;
         }
+
         String bodyStr = readRequestBody();
         Map<String, String> form = parseQueryString(bodyStr);
+
         String xStr = form.get("xVal");
         String yStr = form.get("yVal");
         String rStr = form.get("rVal");
-        String sessionId = form.get("sessionId");
 
         if (xStr == null || yStr == null || rStr == null) {
             System.out.println(errorResult("Missing required parameters xVal,yVal,rVal"));
             return;
         }
 
-        double x, y, r;
-        long startNano = System.nanoTime();
+        double x, r;
+        int y;
+
         try {
             x = Double.parseDouble(xStr);
-            y = Double.parseDouble(yStr);
+            y = Integer.parseInt(yStr); // Integer.parseInt استفاده شد
             r = Double.parseDouble(rStr);
         } catch (NumberFormatException e) {
-            System.out.println(errorResult("Parameters must be numeric"));
+            System.out.println(errorResult("Parameters must be numeric, Y must be an integer"));
             return;
         }
 
@@ -72,29 +105,30 @@ public class FastCGIServer {
             return;
         }
 
+        // بررسی ناحیه با نوع داده int برای y
         boolean inArea = AreaChecker.isInArea(x, y, r);
-        long execNano = System.nanoTime() - startNano; // execution time in nanoseconds
+
+        // محاسبه زمان اجرا
+        double execTime = (System.nanoTime() - startNano) / 1000000.0; // زمان اجرا در میلی‌ثانیه
         String now = LocalDateTime.now().format(TIME_FMT);
 
-        if (sessionId == null || sessionId.trim().isEmpty()) {
-            sessionId = "session_" + System.currentTimeMillis() + "_" + Integer.toHexString((int)(Math.random()*10000));
-        } else {
-            sessionId = sessionId.trim();
-        }
-
-        SessionManager.CalculationResult result = new SessionManager.CalculationResult(
-                x, y, r, inArea, now, execNano
+        // ذخیره نتیجه جدید
+        CalculationResult result = new CalculationResult(
+                x, y, r, inArea, now, execTime
         );
 
-        SessionManager.addResult(sessionId, result);
+        ALL_RESULTS.add(result);
 
-        var allResults = SessionManager.getResults(sessionId);
-        String body = buildJsonResponseFromList(allResults);
+        // ارسال نتایج به صورت معکوس
+        List<CalculationResult> reversedResults = new ArrayList<>(ALL_RESULTS);
+        Collections.reverse(reversedResults);
+
+        String body = buildJsonResponseFromList(reversedResults);
 
         System.out.println(successJsonResult(body));
     }
 
-    /*  Utilities */
+    // Utilities - متدهای کمکی
 
     private static String readRequestBody() {
         try {
@@ -132,7 +166,7 @@ public class FastCGIServer {
         return map;
     }
 
-    private static String buildJsonResponseFromList(List<SessionManager.CalculationResult> results) {
+    private static String buildJsonResponseFromList(List<CalculationResult> results) {
         StringBuilder sb = new StringBuilder();
         sb.append("{\"results\":[");
         for (int i = 0; i < results.size(); i++) {
