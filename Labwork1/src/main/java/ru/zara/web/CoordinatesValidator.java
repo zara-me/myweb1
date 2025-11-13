@@ -4,16 +4,18 @@ package ru.zara.web;
 public class CoordinatesValidator {
 
     private final double x;
-    private final double y;
+    private final int y; // y is int
     private final double r;
 
     private static final double X_MIN = -3.0;
     private static final double X_MAX = 5.0;
-    private static final double[] VALID_Y_VALUES = {-4, -3, -2, -1, 0, 1, 2, 3, 4};
+    // y is int
+    private static final int[] VALID_Y_VALUES = {-4, -3, -2, -1, 0, 1, 2, 3, 4};
+    // R
     private static final double R_MIN = 2.0;
     private static final double R_MAX = 5.0;
 
-    public CoordinatesValidator(double x, double y, double r) {
+    public CoordinatesValidator(double x, int y, double r) { // y is int
         this.x = x;
         this.y = y;
         this.r = r;
@@ -24,12 +26,12 @@ public class CoordinatesValidator {
     }
 
     private boolean checkX() {
-        return Double.isFinite(x) && (x > X_MIN && x < X_MAX);
+        return Double.isFinite(x) && (x >= X_MIN && x <= X_MAX);
     }
 
     private boolean checkY() {
-        for (double validY : VALID_Y_VALUES) {
-            if (Math.abs(y - validY) < 1e-9) {
+        for (int validY : VALID_Y_VALUES) { // اعتبارسنجی مستقیم بدون نیاز به تلورانس
+            if (y == validY) {
                 return true;
             }
         }
@@ -37,6 +39,5 @@ public class CoordinatesValidator {
     }
 
     private boolean checkR() {
-        return Double.isFinite(r) && (r > R_MIN && r < R_MAX);
-    }
+        return Double.isFinite(r) && (r > R_MIN && r < R_MAX);    }
 }
