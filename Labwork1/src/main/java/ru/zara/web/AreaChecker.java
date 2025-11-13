@@ -5,7 +5,7 @@ public class AreaChecker {
     public static boolean isInArea(double x, int y, double r) {
 
         //  r < 2
-        if (!Double.isFinite(x) || r < 2 || !Double.isFinite(r)) {
+        if (!Double.isFinite(x) || r <= 2 || r >= 5 || !Double.isFinite(r)) {
             return false;
         }
 
