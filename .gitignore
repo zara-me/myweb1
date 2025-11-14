@@ -1,0 +1,28 @@
+# Build directories
+build/
+target/
+out/
+
+# Compiled artifacts
+*.jar
+*.war
+*.ear
+*.class
+
+# Temporary files
+tmp/
+temp/
+
+# Archive files
+*.zip
+*.tar.gz
+*.rar
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# System files
+.DS_Store
+Thumbs.db
