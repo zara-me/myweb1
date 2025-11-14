@@ -1,0 +1,555 @@
+:root {
+
+    --content-width: 1000px;
+    --main-bg: #f8f8f8;
+    --card-bg: #ffffff;
+    --primary-color: #3f51b5;
+    --error-color: #d32f2f;
+
+    /* override */
+    --bg-primary: #292D38;
+    --bg-secondary: #2C313C;
+    --bg-gradient: linear-gradient(135deg, #292D38 0%, #2C313C 100%);
+    --primary-500: #8B4513;
+    --primary-600: #703710;
+    --primary-700: #572A0C;
+    --primary-100: #E6D2C0;
+    --primary-50: #F3EAE4;
+
+    --accent-400: #2F4F4F;
+    --accent-300: #5F9EA0;
+    --accent-light: #F0FFFF;
+
+    --mustard-yellow: #C9A043;
+
+    --surface: rgba(255, 255, 255, 0.5);
+    --glass: rgba(255, 255, 255, 0.65);
+    --text-primary: #453E32;
+    --text-secondary: #6A6054;
+    --text-muted: #998F84;
+    --border: rgba(69, 62, 50, 0.3);
+
+    --success: #388E3C;
+    --error: #D32F2F;
+    --warning: var(--mustard-yellow);
+
+    --graph-area-fill: #D5DBCF;
+
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.2);
+    --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.3);
+    --shadow-xl: 0 32px 64px rgba(0, 0, 0, 0.35);
+    --inset-shadow: inset 2px 2px 8px rgba(0, 0, 0, 0.1);
+
+    --glass-blur: 18px;
+    --border-radius: 16px;
+    --border-radius-sm: 12px;
+    --border-radius-lg: 24px;
+    --content-width: 1200px;
+    --gap: 24px;
+}
+
+/* Reset و تنظیمات عمومی*/
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100%;
+    scroll-behavior: smooth;
+}
+
+body {
+
+    font-family: sans-serif;
+    background: var(--bg-gradient);
+    background-attachment: fixed;
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.6;
+    padding: 0;
+    margin: 0;
+    min-height: 100vh;
+}
+
+/*ساختار کلی صفحه (Flexbox)*/
+.main-wrapper {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 24px;
+    gap: 32px;
+}
+
+/* container: */
+.container {
+    width: 100%;
+    max-width: var(--content-width);
+    display: flex;
+    gap: var(--gap);
+    align-items: stretch;
+    flex: 1;
+}
+
+/* results-section table */
+.results-section {
+    width: 100%;
+    max-width: var(--content-width);
+    margin: 0 auto; /* در وسط صفحه قرار می‌گیره*/
+}
+
+/* Header */
+header {
+    width: 100%;
+    max-width: var(--content-width);
+    padding: 20px 28px;
+    border-radius: var(--border-radius);
+    background: var(--glass);
+    border: 1px solid var(--border);
+    backdrop-filter: blur(var(--glass-blur));
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-md), 0 0 15px rgba(201, 160, 67, 0.2);
+}
+ /* یک خط رنگی بالای هدر اضافه می‌کنه*/
+header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary-500), var(--mustard-yellow), var(--accent-400));
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+}
+
+header h1 {
+    margin: 0;
+    font-family: sans-serif;
+    font-size: 16px;
+    color: var(--primary-700);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-shadow: 0 0 5px rgba(69, 62, 50, 0.1);
+}
+
+/* کارت‌ها / card همان جعبه محتوا ها است که به رنگ طوسیه*/
+.card {
+    border-radius: var(--border-radius-lg);
+    background: var(--glass);
+    border: 1px solid var(--border);
+    backdrop-filter: blur(var(--glass-blur));
+    transition: all 0.3s ease; /* وقتی روی این باکس ها قرار میگیره موس حالت نرم داره*/
+    box-shadow:
+        var(--shadow-lg),
+        0 0 10px 1px rgba(201, 160, 67, 0.15);
+}
+
+/*باعث می‌شه وقتی موس روی کارت رفت کارت کمی بالا تر بیاد و سایه بزرگ تر و برجسته تر میشه */
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow:
+        var(--shadow-xl),
+        0 0 20px 3px rgba(201, 160, 67, 0.4);
+}
+
+/*Graph & container svg(Scalable Vector Graphics)*/
+.graph-section {
+    flex: 0 0 62%;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.graph-container {
+    border-radius: var(--border-radius);
+    padding: 20px;
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.8) 0%, rgba(240, 240, 240, 0.8) 100%);
+    border: 1px solid rgba(69, 62, 50, 0.4);
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.2), inset 0 2px 8px rgba(139, 69, 19, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+/*Adds a visual background effect*/
+.graph-container::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 10% 20%, rgba(0, 0, 0, 0.02) 0%, rgba(0, 0, 0, 0) 80%);
+    z-index: 0;
+    border-radius: var(--border-radius);
+    pointer-events: none;
+}
+/*دوتا نقطه راهنما بالای نمودار */
+.graph-legend {
+    display: flex;
+    gap: 20px; /* فاصله بین هر ایتم*/
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-shadow: none;
+}
+
+.legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid var(--bg-secondary);
+    box-shadow: none !important;
+}
+
+.legend-in { background: var(--success); }
+.legend-out { background: var(--error); }
+
+/* فرم */
+.form-section {
+    flex: 0 0 35%;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.input-group label {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 14px;
+}
+
+.input-field {
+    padding: 14px 16px;
+    border-radius: var(--border-radius-sm);
+    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: var(--shadow-sm);
+    color: var(--text-primary);
+    width: 160px;
+    font-family: inherit;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.input-field::placeholder {
+    color: var(--text-muted);
+    font-style: italic;
+    font-size: 13px;
+    opacity: 0.8;
+}
+/*وقتی کاربر روی فیلد کلیک می‌کند، border و shadow تغییر می‌کند*/
+.input-field:focus {
+    outline: none;
+    transform: translateY(-2px);
+    border-color: var(--mustard-yellow);
+    box-shadow:
+        0 8px 24px rgba(201, 160, 67, 0.15),
+        0 0 0 3px rgba(201, 160, 67, 0.4);
+}
+
+/* پیام خطا - message-box for error */
+.message-box {
+    padding: 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.5;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 20px;
+    border: 1px solid var(--error);
+    backdrop-filter: blur(8px);
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+    background-color: #ffebeb;
+    color: var(--error-color);
+}
+
+/* radio-group (گزینه‌های Y)*/
+.radio-group {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 16px;
+    border-radius: var(--border-radius-sm);
+    background: var(--glass);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    backdrop-filter: blur(10px);
+}
+
+.radio-group label {
+    padding: 10px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--text-primary);
+    background: transparent;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    position: relative;
+    border: 1px solid transparent;
+}
+/* برای قسمت y وقتی روی گزینه ای ان را تعاملی نشان میدهد
+به علت داشتن hover
+*/
+.radio-group label:hover {
+    background: rgba(139, 69, 19, 0.1);
+    color: var(--primary-500);
+}
+
+.radio-group input[type="radio"] { display: none; }
+
+/*.وقتی گزینه انتخاب شد به ما نشان میده که کدام را انتخاب کردیم در y*/
+.radio-group input[type="radio"]:checked + span {
+    background: var(--primary-500);
+    color: var(--primary-50);
+    box-shadow:
+        0 4px 12px rgba(139, 69, 19, 0.5),
+        inset 0 0 8px var(--mustard-yellow);
+    transform: scale(1.05);
+}
+
+.radio-group label > span {
+    padding: 6px 10px;
+    border-radius: 8px;
+    display: inline-block;
+    transition: all 0.2s ease;
+    background: rgba(139, 69, 19, 0.05);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+}
+
+/*دکمه‌های بررسی و چک*/
+.btn {
+    padding: 16px 28px;
+    border-radius: var(--border-radius-sm);
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    min-width: 150px;
+    text-align: center;
+    font-size: 15px;
+    transition: all 0.25s ease;
+    font-family: inherit;
+    letter-spacing: 0.3px;
+    backdrop-filter: blur(10px);
+}
+
+.btn.primary {
+    background: linear-gradient(135deg, var(--accent-400), var(--accent-300));
+    color: var(--accent-light);
+    box-shadow:
+        0 6px 20px rgba(47, 79, 79, 0.6),
+        0 0 10px 2px rgba(201, 160, 67, 0.4);
+}
+
+.btn.danger {
+    background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+    color: var(--primary-50);
+    box-shadow: 0 6px 20px rgba(139, 69, 19, 0.5);
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg), 0 0 15px rgba(201, 160, 67, 0.3);
+}
+
+.btn:active { transform: translateY(0); }
+
+/*فرم اقدامات*/
+.form-actions {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    justify-content: center;
+    margin-top: 24px;
+}
+
+/* نتایج جدول
+th عنوان ستون
+td داده‌ها
+*/
+.results-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    background: var(--primary-50);
+    box-shadow: var(--shadow-lg);
+    backdrop-filter: blur(var(--glass-blur));
+}
+
+.results-table th,
+.results-table td {
+    padding: 16px 14px;
+    text-align: center;
+    border-bottom: 1px solid rgba(69, 62, 50, 0.4);
+    font-size: 14px;
+    color: var(--text-primary);
+}
+
+.results-table th {
+    background: var(--mustard-yellow);
+    color: var(--primary-700);
+    font-weight: 800;
+    position: relative;
+}
+
+.results-table th::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--accent-400);
+}
+/*همونه که وقتی رو ستون ها نگه میداری رنگش تغییر میکنه !!! */
+.results-table tbody tr:nth-child(even) {
+    background: rgba(139, 69, 19, 0.08);
+}
+
+.results-table tbody tr:hover {
+    background: rgba(47, 79, 79, 0.2);
+}
+
+.result-cell-in {
+    color: var(--success);
+    font-weight: 700;
+    background: rgba(56, 142, 60, 0.2);
+    padding: 8px 14px;
+    border-radius: 10px;
+    display: inline-block;
+}
+
+.result-cell-out {
+    color: var(--error);
+    font-weight: 700;
+    background: rgba(211, 47, 47, 0.2);
+    padding: 8px 14px;
+    border-radius: 10px;
+    display: inline-block;
+}
+
+/* svg / نقطه‌ها */
+.graph-container svg {
+    display: block;
+    margin: 0 auto;
+    border-radius: 12px;
+    overflow: visible;
+    background: rgba(69, 62, 50, 0.05);
+    padding: 12px;
+    position: relative;
+    z-index: 1;
+    backdrop-filter: blur(5px);
+}
+
+.graph-container svg text {
+    fill: var(--text-primary) !important;
+    font-weight: 800;
+    font-family: sans-serif !important;
+    font-size: 12px;
+    paint-order: stroke fill;
+    text-shadow: 0 0 1px rgba(255, 255, 255, 0.8);
+}
+
+.graph-container svg line,
+.graph-container svg polyline,
+.graph-container svg polygon,
+.graph-container svg path {
+    stroke: var(--text-secondary) !important;
+    stroke-width: 1.6 !important;
+    fill-opacity: 0.8 !important;
+    fill: var(--graph-area-fill) !important;
+}
+
+.graph-container svg line[stroke="currentColor"],
+.graph-container svg polygon[fill="currentColor"] {
+    stroke: var(--primary-500) !important;
+    fill: var(--primary-500) !important;
+}
+
+.point-in {
+    fill: var(--success) !important;
+    stroke: var(--bg-secondary) !important;
+    stroke-width: 1.5 !important;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+}
+
+.point-out {
+    fill: var(--error) !important;
+    stroke: var(--bg-secondary) !important;
+    stroke-width: 1.5 !important;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+}
+
+.point-label {
+    font-family: sans-serif;
+    font-size: 11px;
+    fill: var(--text-primary) !important;
+    font-weight: 700;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+}
+
+/* فوکوس */
+:focus {
+    outline: 3px solid rgba(201, 160, 67, 0.5);
+    outline-offset: 3px;
+}
+
+/*
+ریسپانسیو برای اینکه روی هر گوشی و سیستمی قابل اجرا باشه
+*/
+@media (max-width: 1024px) {
+    .container {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .graph-section,
+    .form-section {
+        flex: 1 1 100%;
+        width: 100%;
+    }
+
+    header {
+        padding: 18px 24px;
+    }
+
+    .input-field { width: 140px; }
+
+    .btn {
+        padding: 14px 24px;
+        min-width: 140px;
+        font-size: 14px;
+    }
+
+    .form-actions { flex-direction: column; gap: 12px; }
+}
+
+@media (max-width: 768px) {
+    .main-wrapper { padding: 20px 16px; gap: 24px; }
+
+    header { padding: 16px 20px; }
+    header h1 { font-size: 14px; }
+
+    .card { padding: 20px; }
+    .input-field { width: 100%; }
+
+    .radio-group { gap: 6px; }
+    .radio-group label { padding: 8px 10px; font-size: 13px; }
+
+    .btn { width: 100%; }
+}
